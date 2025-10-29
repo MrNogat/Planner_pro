@@ -77,7 +77,12 @@
     </div>
     <div id="card-modal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><input type="text" id="modal-card-title" class="modal-title"><button id="modal-close-btn" class="modal-close">&times;</button></div><div id="modal-body"></div></div></div>
     <div id="template-manager-modal" class="modal-overlay"><div class="modal-content"><div class="modal-header"><h2 class="modal-title" style="padding:0;">Manage Templates</h2><button id="template-manager-close-btn" class="modal-close">&times;</button></div><div id="template-manager-body"></div></div></div>
-    <script>
+   
+
+
+
+
+   <script>
         // --- DATA ---
         let boardData = { "title": "My Project", "templates": [], "lists": [ { "id": "j9aqn2na", "name": "To Do", "color": "#ebecf0", "cards": [ { "id": "3qqmckim", "text": "Setup project structure", "color": "#0061ff", "checklists": [ { "id": "qbf2wv2r", "title": "Initial Tasks", "items": [ { "id": "v8l323ax", "text": "Initialize repository", "done": true }, { "id": "614sbbqt", "text": "Create HTML file", "done": true } ] } ] } ] } ] };
         let activeModal = { listId: null, cardId: null };
