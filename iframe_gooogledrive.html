@@ -1,163 +1,111 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tradutor de Google Drive pra Zoho Sites</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #74ABE2, #5563DE);
-    color: #fff;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-  }
-
-  h1 {
-    margin-top: 40px;
-    font-size: 2em;
-    text-align: center;
-  }
-
-  .container {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(6px);
-    border-radius: 15px;
-    padding: 25px;
-    margin: 20px;
-    width: 90%;
-    max-width: 600px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  }
-
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-
-  input[type="text"] {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    outline: none;
-    font-size: 1em;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-
-  button {
-    background: #00D1B2;
-    border: none;
-    color: white;
-    padding: 12px 20px;
-    font-size: 1em;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    margin-top: 15px;
-    margin-right: 10px;
-  }
-
-  button:hover {
-    background: #00b89c;
-  }
-
-  #output {
-    margin-top: 20px;
-    background: rgba(255,255,255,0.2);
-    padding: 10px;
-    border-radius: 10px;
-    word-break: break-word;
-    color: #fff;
-  }
-
-  iframe {
-    margin-top: 20px;
-    width: 100%;
-    height: 500px;
-    border: none;
-    border-radius: 10px;
-  }
-
-  footer {
-    margin-top: auto;
-    padding: 20px;
-    font-size: 0.85em;
-    opacity: 0.8;
-  }
-
-  .button-group {
-    margin-top: 15px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OneDrive Folder iFrame Generator</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f9fafc;
+      color: #222;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 { color: #0078d4; margin-bottom: 10px; }
+    input, button, textarea {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin: 5px;
+    }
+    input { width: 420px; max-width: 90%; }
+    button {
+      background: #0078d4;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover { background: #005ea2; }
+    textarea {
+      width: 90%;
+      height: 100px;
+      margin-top: 10px;
+      font-family: monospace;
+      resize: vertical;
+    }
+    iframe {
+      margin-top: 25px;
+      width: 90%;
+      height: 600px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
+  <h1>OneDrive Folder → iFrame Generator</h1>
+  <p>Paste your OneDrive share link below:</p>
 
-  <h1>📂 Tradutor de Google Drive pra Zoho Sites</h1>
+  <input id="onedriveLink" placeholder="https://1drv.ms/f/s!... or onedrive.live.com/..." />
+  <button onclick="generateEmbed()">Generate</button>
+  <button onclick="copyCode()">Copy Code</button>
 
-  <div class="container">
-    <label for="driveLink">Cole o link da pasta do Google Drive:</label>
-    <input type="text" id="driveLink" placeholder="https://drive.google.com/drive/folders/..." />
+  <textarea id="iframeCode" readonly placeholder="Generated iframe code will appear here..."></textarea>
 
-    <div class="button-group">
-      <button onclick="generateEmbed()">Gerar e Visualizar</button>
-      <button onclick="copyEmbed()">Copiar Código do Iframe</button>
-    </div>
-
-    <div id="output"></div>
-    <iframe id="previewFrame" style="display:none;"></iframe>
-  </div>
-
-  <footer>Feito com 💙 para facilitar o compartilhamento</footer>
-
+  <iframe id="preview" title="OneDrive Preview"></iframe>
+<iframe src="https://workdrive.zohoexternal.com/embed/vnu206368f4a4a35c48ddacfec0c4cca35417?hidetheme=true&toolbar=false&layout=compact&appearance=light&themecolor=blue" scrolling="no" frameborder="0" allowfullscreen="true" width="1000" height="700" title="Código de inserção"></iframe>
+  
   <script>
-    let currentEmbed = "";
+    function convertToEmbed(url) {
+      url = url.trim();
+
+      // Expand short 1drv.ms manually without following redirect
+      if (url.includes("1drv.ms")) {
+        // 1drv.ms/f/s!xxxxx → onedrive.live.com/embed?resid=xxxxx
+        const id = url.split("!")[1];
+        if (id) return `https://onedrive.live.com/embed?resid=${id}`;
+      }
+
+      // Common onedrive.live.com share formats
+      if (url.includes("redir?resid="))
+        return url.replace("redir?", "embed?");
+
+      if (url.includes("view.aspx?resid="))
+        return url.replace("view.aspx?", "embed?");
+
+      if (url.includes("?id="))
+        return url.replace("?id=", "embed?resid=");
+
+      if (!url.includes("embed")) {
+        // fallback: add embed=1 param
+        return url.includes("?") ? url + "&embed=1" : url + "?embed=1";
+      }
+
+      return url;
+    }
 
     function generateEmbed() {
-      const input = document.getElementById('driveLink').value.trim();
-      const output = document.getElementById('output');
-      const frame = document.getElementById('previewFrame');
+      const input = document.getElementById("onedriveLink").value;
+      if (!input) return alert("Please paste a OneDrive folder link!");
 
-      if (!input.includes("/folders/")) {
-        output.innerHTML = "❌ Por favor, cole um link válido de pasta do Google Drive.";
-        frame.style.display = "none";
-        currentEmbed = "";
-        return;
-      }
+      const embedURL = convertToEmbed(input);
+      const iframeCode = `<iframe src="${embedURL}" width="100%" height="600" frameborder="0" scrolling="yes" allowfullscreen></iframe>`;
 
-      try {
-        const folderId = input.split("/folders/")[1].split("?")[0];
-        const embedUrl = `https://drive.google.com/embeddedfolderview?id=${folderId}#list`;
-        currentEmbed = `<iframe src="${embedUrl}" style="width:100%; height:600px; border:0;"></iframe>`;
-
-        output.innerHTML = `
-          ✅ Link Embed:<br>
-          <a href="${embedUrl}" target="_blank" style="color:#aaffff;">${embedUrl}</a><br><br>
-          <strong>Código do iframe (copiar usando o botão):</strong><br>
-          <code style="color:#fff;">${currentEmbed.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</code>
-        `;
-
-        frame.src = embedUrl;
-        frame.style.display = "block";
-      } catch (e) {
-        output.innerHTML = "⚠️ Não foi possível processar o link.";
-        frame.style.display = "none";
-        currentEmbed = "";
-      }
+      document.getElementById("iframeCode").value = iframeCode;
+      document.getElementById("preview").src = embedURL;
     }
 
-    function copyEmbed() {
-      if (!currentEmbed) return alert("⚠️ Primeiro gere o embed antes de copiar.");
-      navigator.clipboard.writeText(currentEmbed)
-        .then(() => alert("✅ Código do iframe copiado para a área de transferência!"))
-        .catch(() => alert("❌ Falha ao copiar. Tente novamente."));
+    function copyCode() {
+      const text = document.getElementById("iframeCode");
+      text.select();
+      document.execCommand("copy");
+      alert("iFrame code copied!");
     }
   </script>
-
 </body>
 </html>

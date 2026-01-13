@@ -1,0 +1,56 @@
+CORE ORGANIZATION
+
+
+
+
+
+
+
+
+CORE  ELEMENTS
+
+******************************
+** [ ]  Dropdown            **
+** [ ]  Slider              **
+** [ ]  Nr slide vertical   **
+******************************
+
+
+
+
+erer
+asas
+ 
+
+
+Create Template
+
+
+
+Example:
+Subfield
+[
+
+   title = " Display ”
+
+    [
+        display_label  =  "  "
+
+          
+    ]
+
+
+]
+
+
+Subfield_type =  
+
+ [
+
+        Type  =  [  "dropdown” ,  ”array”  ,  ”slider”  ]
+        display_label =  " "
+         
+
+ ]
+
+
