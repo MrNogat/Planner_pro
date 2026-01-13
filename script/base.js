@@ -678,9 +678,11 @@ function exportProject() {
   const dataStr = JSON.stringify(boardData, null, 2);
   const link = document.createElement("a");
   link.href =
-    "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+    "data:application/octet-stream;charset=utf-8," + encodeURIComponent(dataStr);
   link.download = `${boardData.title.replace(/\s/g, "_")}.plnpro`;
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
 }
 function importProject(e) {
   const file = e.target.files[0];
